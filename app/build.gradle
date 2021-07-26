@@ -12,7 +12,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "br.com.douglasmotta.whitelabeltutorial"
+        applicationId "br.com.gabrielsantana.whitelabeltutorial"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
@@ -36,6 +36,28 @@ android {
     }
     buildFeatures {
         viewBinding true
+    }
+    productFlavors {
+        flavorDimensions 'product', 'side'
+        bike {
+            dimension 'product'
+            applicationIdSuffix '.bike'
+            manifestPlaceholders.appName = "Bike"
+        }
+        car {
+            dimension 'product'
+            applicationIdSuffix '.car'
+            manifestPlaceholders.appName = "Car"
+        }
+        client {
+            dimension 'side'
+            manifestPlaceholders.appNameSuffix = ""
+        }
+        admin {
+            dimension 'side'
+            applicationIdSuffix '.admin'
+            manifestPlaceholders.appNameSuffix = ".Admin"
+        }
     }
 }
 
@@ -84,3 +106,5 @@ kapt {
         option("-Adagger.hilt.android.internal.disableAndroidSuperclassValidation=true")
     }
 }
+
+apply plugin: 'com.google.gms.google-services'

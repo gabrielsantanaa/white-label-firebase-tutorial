@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import br.com.douglasmotta.whitelabeltutorial.R
 import br.com.douglasmotta.whitelabeltutorial.databinding.FragmentProductsBinding
 
 class ProductsFragment : Fragment() {
@@ -18,6 +20,10 @@ class ProductsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProductsBinding.inflate(inflater, container, false)
+
+        binding.fab.setOnClickListener {
+            findNavController().navigate(R.id.action_productsFragment_to_addProductFragment)
+        }
         return binding.root
     }
 }

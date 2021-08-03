@@ -27,9 +27,9 @@ class CurrencyTextWatcher(
         }
     }
 
-    private fun getFormattedValue(value: Double): String = if (value == 0.0) {
-        ""
-    } else value.toCurrency()
+    private fun getFormattedValue(value: Double): String =
+        if (value == 0.0)  ""
+        else value.toCurrency()
 
     private fun updateValue(formatted: String) {
         editText.setText(formatted)

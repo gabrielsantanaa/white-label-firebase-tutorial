@@ -15,7 +15,7 @@ class CreateProductUseCaseImpl(
             val imageUrl = uploadProductImageUseCase(imageUri)
             val product = Product(UUID.randomUUID().toString(), description, price, imageUrl)
             productRepository.createProduct(product)
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             throw e
         }
     }

@@ -32,7 +32,7 @@ class FirebaseProductDataSource(
 
             productsReference.get().addOnSuccessListener { documents ->
                 val products = mutableListOf<Product>()
-                for(document in documents) {
+                for (document in documents) {
                     document.toObject(Product::class.java).run { products.add(this) }
                 }
                 continuation.resumeWith(Result.success(products))

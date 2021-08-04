@@ -2,20 +2,18 @@ package br.com.douglasmotta.whitelabeltutorial.ui.addproduct
 
 import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.widget.addTextChangedListener
 import br.com.douglasmotta.whitelabeltutorial.databinding.AddProductFragmentBinding
 import br.com.douglasmotta.whitelabeltutorial.util.CurrencyTextWatcher
+import br.com.douglasmotta.whitelabeltutorial.util.observeOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.textfield.TextInputLayout
 
 
-class AddProductFragment : BottomSheetDialogFragment () {
+class AddProductFragment : BottomSheetDialogFragment() {
 
     private var _binding: AddProductFragmentBinding? = null
     private val binding get() = _binding!!
@@ -41,7 +39,24 @@ class AddProductFragment : BottomSheetDialogFragment () {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setEventsObserver()
         setListeners()
+    }
+
+    private fun setEventsObserver() {
+        viewModel.eventChannel.observeOnLifecycle(viewLifecycleOwner) { event ->
+            when (event) {
+                AddProductViewModel.Event.DescriptionFieldErrorResId -> {
+                    binding.textInputLayoutDescription.setError(event.resId)
+                }
+                AddProductViewModel.Event.ImageUriErrorResId -> {
+                    binding.imageProduct.setImageResource(event.resId)
+                }
+                AddProductViewModel.Event.PriceFieldErrorResId -> {
+                    binding.textInputLayoutDescription.setError(event.resId)
+                }
+            }
+        }
     }
 
     private fun setListeners() {
@@ -51,7 +66,7 @@ class AddProductFragment : BottomSheetDialogFragment () {
         binding.buttonAddProduct.setOnClickListener {
             val description = binding.textDescription.text.toString()
             val price = binding.textPrice.text.toString()
-
+            viewModel.validateFields(description, price, imageUri)
         }
         binding.textPrice.run {
             addTextChangedListener(CurrencyTextWatcher(this))
@@ -60,6 +75,10 @@ class AddProductFragment : BottomSheetDialogFragment () {
 
     private fun chooseImage() {
         getContent.launch("image/*")
+    }
+
+    private fun TextInputLayout.setError(stringResId: Int) {
+        error = getString(stringResId)
     }
 
     override fun onDestroyView() {

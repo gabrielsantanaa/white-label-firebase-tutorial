@@ -6,16 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.viewModels
+import br.com.douglasmotta.whitelabeltutorial.R
 import br.com.douglasmotta.whitelabeltutorial.databinding.AddProductFragmentBinding
 import br.com.douglasmotta.whitelabeltutorial.util.CurrencyTextWatcher
 import br.com.douglasmotta.whitelabeltutorial.util.observeOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputLayout
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class AddProductFragment : BottomSheetDialogFragment() {
 
     private var _binding: AddProductFragmentBinding? = null
+
     private val binding get() = _binding!!
 
     private var imageUri: Uri? = null
@@ -26,7 +30,7 @@ class AddProductFragment : BottomSheetDialogFragment() {
             binding.imageProduct.setImageURI(uri)
         }
 
-    private lateinit var viewModel: AddProductViewModel
+    private val viewModel: AddProductViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,14 +50,28 @@ class AddProductFragment : BottomSheetDialogFragment() {
     private fun setEventsObserver() {
         viewModel.eventChannel.observeOnLifecycle(viewLifecycleOwner) { event ->
             when (event) {
-                AddProductViewModel.Event.DescriptionFieldErrorResId -> {
-                    binding.textInputLayoutDescription.setError(event.resId)
+                is AddProductViewModel.Event.DescriptionFieldErrorResId -> {
+                    if (event.isValid) {
+                        binding.textInputLayoutDescription.error = ""
+                    } else {
+                        binding.textInputLayoutDescription.error = getString(event.resId)
+                    }
+
                 }
-                AddProductViewModel.Event.ImageUriErrorResId -> {
-                    binding.imageProduct.setImageResource(event.resId)
+                is AddProductViewModel.Event.ImageUriErrorResId -> {
+                    if (event.isValid) {
+                        binding.imageProduct.setBackgroundResource(R.drawable.background_product_image)
+                    } else {
+                        binding.imageProduct.setBackgroundResource(R.drawable.background_product_image_error)
+                    }
+
                 }
-                AddProductViewModel.Event.PriceFieldErrorResId -> {
-                    binding.textInputLayoutDescription.setError(event.resId)
+                is AddProductViewModel.Event.PriceFieldErrorResId -> {
+                    if (event.isValid) {
+                        binding.textInputLayoutPrice.error = ""
+                    } else {
+                        binding.textInputLayoutPrice.error = getString(event.resId)
+                    }
                 }
             }
         }
@@ -75,10 +93,6 @@ class AddProductFragment : BottomSheetDialogFragment() {
 
     private fun chooseImage() {
         getContent.launch("image/*")
-    }
-
-    private fun TextInputLayout.setError(stringResId: Int) {
-        error = getString(stringResId)
     }
 
     override fun onDestroyView() {

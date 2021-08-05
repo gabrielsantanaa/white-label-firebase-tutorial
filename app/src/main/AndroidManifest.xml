@@ -8,6 +8,7 @@
         android:label="${appName}${appNameSuffix}"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:name=".MyApplication"
         android:theme="@style/Theme.WhiteLabelTutorial">
         <activity android:name=".ui.MainActivity">
             <intent-filter>

@@ -2,8 +2,9 @@ package br.com.douglasmotta.whitelabeltutorial.data
 
 import android.net.Uri
 import br.com.douglasmotta.whitelabeltutorial.domain.model.Product
+import javax.inject.Inject
 
-class ProductRepository(
+class ProductRepository @Inject constructor(
     private val dataSource: ProductDataSource
 ) {
 

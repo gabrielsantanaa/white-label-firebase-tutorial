@@ -27,7 +27,7 @@ class AddProductFragment : BottomSheetDialogFragment() {
     private val getContent =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             imageUri = uri
-            binding.imageProduct.setImageURI(uri)
+            binding.addImageProduct.setImageURI(uri)
         }
 
     private val viewModel: AddProductViewModel by viewModels()
@@ -60,9 +60,9 @@ class AddProductFragment : BottomSheetDialogFragment() {
                 }
                 is AddProductViewModel.Event.ImageUriErrorResId -> {
                     if (event.isValid) {
-                        binding.imageProduct.setBackgroundResource(R.drawable.background_product_image)
+                        binding.addImageProduct.setBackgroundResource(R.drawable.background_product_image)
                     } else {
-                        binding.imageProduct.setBackgroundResource(R.drawable.background_product_image_error)
+                        binding.addImageProduct.setBackgroundResource(R.drawable.background_product_image_error)
                     }
 
                 }
@@ -78,7 +78,7 @@ class AddProductFragment : BottomSheetDialogFragment() {
     }
 
     private fun setListeners() {
-        binding.imageProduct.setOnClickListener {
+        binding.addImageProduct.setOnClickListener {
             chooseImage()
         }
         binding.buttonAddProduct.setOnClickListener {

@@ -5,11 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import br.com.douglasmotta.whitelabeltutorial.R
 import br.com.douglasmotta.whitelabeltutorial.databinding.AddProductFragmentBinding
 import br.com.douglasmotta.whitelabeltutorial.util.CurrencyTextWatcher
+import br.com.douglasmotta.whitelabeltutorial.util.PRODUCT_KEY
 import br.com.douglasmotta.whitelabeltutorial.util.observeOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputLayout
@@ -62,7 +65,7 @@ class AddProductFragment : BottomSheetDialogFragment() {
                     if (event.isValid) {
                         binding.addImageProduct.setBackgroundResource(R.drawable.background_product_image)
                     } else {
-                        binding.addImageProduct.setBackgroundResource(R.drawable.background_product_image_error)
+                        binding.addImageProduct.setBackgroundResource(event.resId)
                     }
 
                 }
@@ -71,6 +74,13 @@ class AddProductFragment : BottomSheetDialogFragment() {
                         binding.textInputLayoutPrice.error = ""
                     } else {
                         binding.textInputLayoutPrice.error = getString(event.resId)
+                    }
+                }
+                is AddProductViewModel.Event.SuccessfullyCreatedProduct ->  {
+                    Toast.makeText(activity, event.resId, Toast.LENGTH_LONG).show()
+                    findNavController().run {
+                        previousBackStackEntry?.savedStateHandle?.set(PRODUCT_KEY, event.product)
+                        popBackStack()
                     }
                 }
             }

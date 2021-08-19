@@ -6,8 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.fragment.findNavController
+import br.com.douglasmotta.whitelabeltutorial.R
 import br.com.douglasmotta.whitelabeltutorial.databinding.FragmentProductsBinding
+import br.com.douglasmotta.whitelabeltutorial.domain.model.Product
+import br.com.douglasmotta.whitelabeltutorial.util.PRODUCT_KEY
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class ProductsFragment : Fragment() {
@@ -33,8 +40,43 @@ class ProductsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setRecyclerView()
         setEventsObserver()
-
+        setUiListeners()
+        setNavBackstackObserver()
         viewModel.getProducts()
+    }
+
+    private fun setNavBackstackObserver() {
+        findNavController().run {
+            val navBackStackEntry = getBackStackEntry(R.id.productsFragment)
+            val savedStateHandle = navBackStackEntry.savedStateHandle
+
+            val observer = LifecycleEventObserver { _, event ->
+                if(event == Lifecycle.Event.ON_RESUME && savedStateHandle.contains(PRODUCT_KEY)) {
+                    val product = savedStateHandle.get<Product>(PRODUCT_KEY)
+                    val oldList = productsAdapter.currentList
+                    val newList = oldList.toMutableList().apply {
+                        add(product)
+                    }
+                    productsAdapter.submitList(newList)
+                    binding.recyclerView.smoothScrollToPosition(newList.size - 1)
+                    savedStateHandle.remove<Product>(PRODUCT_KEY)
+                }
+            }
+
+            navBackStackEntry.lifecycle.addObserver(observer)
+
+            viewLifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_DESTROY) {
+                    navBackStackEntry.lifecycle.removeObserver(observer)
+                }
+            })
+        }
+    }
+
+    private fun setUiListeners() {
+        binding.fab.setOnClickListener {
+            findNavController().navigate(R.id.action_productsFragment_to_addProductFragment)
+        }
     }
 
     private fun setRecyclerView() {
@@ -47,6 +89,9 @@ class ProductsFragment : Fragment() {
     private fun setEventsObserver() {
         viewModel.productsData.observe(viewLifecycleOwner) { products ->
             productsAdapter.submitList(products)
+        }
+        viewModel.addButtonVisibility.observe(viewLifecycleOwner) { visibility ->
+            binding.fab.visibility = visibility
         }
     }
 

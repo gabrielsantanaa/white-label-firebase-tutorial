@@ -26,6 +26,8 @@
         android:layout_marginTop="8dp"
         android:textAlignment="center"
         android:textAllCaps="true"
+        tools:text="kkkkkkk"
+        style="@style/Text.Primary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/image_product" />
@@ -35,6 +37,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        tools:text="kkkkkkk"
+        style="@style/Text.Secondary"
         android:textAlignment="center"
         android:textAllCaps="true"
         app:layout_constraintEnd_toEndOf="parent"
